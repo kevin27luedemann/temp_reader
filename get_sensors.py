@@ -50,7 +50,7 @@ def init_file(praefix="", postfix=""):
 def init_db_client(db):
     return db
 
-def loop(sensors,output,db_client="",quiet=False):
+def loop(sensors,output,db_client="",wait_time=5,quiet=False):
     while keep_running:
         now         = dt.strftime(dt.now(),"%Y%m%d_%H%M%S")
         out         = "{}".format(now)
@@ -64,7 +64,7 @@ def loop(sensors,output,db_client="",quiet=False):
         output.flush()
         if not(quiet):
             print(out[:-1])
-        time.sleep(2)
+        time.sleep(wait_time)
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT,  signal_handler)
@@ -74,6 +74,8 @@ if __name__ == "__main__":
 
     parser.add_option(  "-f", "--praefix", dest="praefix",default="",
                         help="File praefix and folder localtion")
+    parser.add_option(  "-t", "--wait_time", dest="wait_time",default="5",
+                        help="Wait time between updates in seconds, default is 5.")
     parser.add_option(  "", "--postfix", dest="postfix",default="",
                         help="Specify custom input file postfix")
     parser.add_option(  "", "--db", dest="db",default="",
@@ -92,6 +94,6 @@ if __name__ == "__main__":
     else:
         client  = ""
 
-    loop(sensors,output,db_client=client,quiet=options.quiet)
+    loop(sensors,output,db_client=client,wait_time=float(options.wait_time),quiet=options.quiet)
 
     output.close()
